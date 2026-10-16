@@ -76,6 +76,10 @@ with `auth = "basic"` or `auth = "bearer"`.
 
 Store credentials in environment variables rather than committing them.
 
+Any option you leave out of `setup()` falls back to an environment variable:
+`CONFLUENCE_URL` (`base_url`), `CONFLUENCE_EMAIL` (`email`), `CONFLUENCE_TOKEN` (`token`)
+and `CONFLUENCE_SPACE` (`space_key`). Options passed to `setup()` take precedence.
+
 ## Commands
 
 | Command | Description |

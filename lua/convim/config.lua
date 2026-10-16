@@ -52,13 +52,30 @@ M.auth_header = function()
   return 'Bearer ' .. (M.token or '')
 end
 
+--- Read a non-empty environment variable, or nil.
+local function env(name)
+  local v = os.getenv(name)
+  if v == nil or v == '' then return nil end
+  return v
+end
+
+--- Explicit setup() options win; otherwise fall back to the CONFLUENCE_*
+--- environment variables so credentials never need to live in the nvim config.
 M.setup = function(opts)
   opts = opts or {}
-  if opts.base_url  ~= nil then M.base_url  = opts.base_url  end
-  if opts.token     ~= nil then M.token     = opts.token     end
-  if opts.email     ~= nil then M.email     = opts.email     end
-  if opts.auth      ~= nil then M.auth      = opts.auth      end
-  if opts.space_key ~= nil then M.space_key = opts.space_key end
+  local function pick(key, var)
+    if opts[key] ~= nil then return opts[key] end
+    return env(var)
+  end
+  local base_url  = pick('base_url',  'CONFLUENCE_URL')
+  local token     = pick('token',     'CONFLUENCE_TOKEN')
+  local email     = pick('email',     'CONFLUENCE_EMAIL')
+  local space_key = pick('space_key', 'CONFLUENCE_SPACE')
+  if base_url  ~= nil then M.base_url  = base_url  end
+  if token     ~= nil then M.token     = token     end
+  if email     ~= nil then M.email     = email     end
+  if opts.auth ~= nil then M.auth      = opts.auth end
+  if space_key ~= nil then M.space_key = space_key end
 end
 
 return M
